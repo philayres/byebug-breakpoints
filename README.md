@@ -22,7 +22,7 @@ Breakpoints are highlighted in the line-number.
 ### Testing inside Atom
 I use the __ruby-test__ package for testing in Rails apps in Atom. I found that byebug statements in code caused the package to hang awating byebug commands (because you couldn't interact with it). This was why I wrote this package in the first place.
 
- I found that ruby-test (really __Cucumber__ and __rpsec__) don't load the byebugrc file, so no more hangs.
+ I found that ruby-test (really __Cucumber__ and __rspec__) don't load the byebugrc file, so no more hangs.
 
 Here's how rubt-test runs the commands:
 
@@ -35,7 +35,7 @@ I found rspec still does not load the byebugrc file, but this is easily fixed by
 
 * byebug -- loads byebug and causes the .byebugrc file to be loaded
 * --no-stop -- causes byebug to not stop after load and wait for commands
-* -p -- just an example of an rpsec option
+* -p -- just an example of an rspec option
 
 Note the double-dash before the rspec path.
 
