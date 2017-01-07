@@ -1,0 +1,27 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus
+# for more details
+'context-menu':
+  'atom-text-editor': [
+      'label': 'Breakpoints'
+      'submenu': [
+        { label: 'Add', command: 'byebug-breakpoints:set' }
+        { label: 'Remove',command: 'byebug-breakpoints:clear' }
+        { label: 'Remove all', command: 'byebug-breakpoints:clear_all' }
+        { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
+      ]
+  ]
+
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Breakpoints'
+      'submenu': [
+        { label: 'Add', command: 'byebug-breakpoints:set' }
+        { label: 'Remove',command: 'byebug-breakpoints:clear' }
+        { label: 'Remove all', command: 'byebug-breakpoints:clear_all' }
+        { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
+      ]
+    ]
+  }
+]
