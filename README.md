@@ -29,12 +29,16 @@ Here's how rubt-test runs the commands:
  <code>bundle exec rspec --tty {relative_path}:{line_number}</code>
 
 ### Testing Outside of Atom (in the terminal)
-I found rspec still does not load the byebugrc file, but this is easily fixed by running it as:
+I found that running rspec using the following command does not appear to load the byebugrc file. rspec will run and byebug commands in code will work, but not breakpoints in the byebugrc file.
+
+<code>$ rspec -p ./spec</code>
+
+This is easily fixed by running it as:
 
 <code>$ byebug --no-stop -- rspec -p -- ./spec</code>
 
 * byebug -- loads byebug and causes the .byebugrc file to be loaded
-* --no-stop -- causes byebug to not stop after load and wait for commands
+* --no-stop -- causes byebug to not stop after load, waiting for commands
 * -p -- just an example of an rspec option
 
 Note the double-dash before the rspec path.
