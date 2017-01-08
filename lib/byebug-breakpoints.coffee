@@ -217,14 +217,15 @@ module.exports = ByebugBreakpoints =
       data = data.replace(r, '')
       # get the markers to update
       decs = @getCachedDecorations(editor)
-      for dec in decs
-        decoration = dec.dec
-        marker = decoration.getMarker()
-        # actual row
-        row = marker.getHeadBufferPosition().row + 1
-        # console.log "Marker row: #{row} was: #{dec.line}"
-        lineToWrite = "b #{path}:#{row}\n"
-        data = data + lineToWrite
+      if decs?
+        for dec in decs
+          decoration = dec.dec
+          marker = decoration.getMarker()
+          # actual row
+          row = marker.getHeadBufferPosition().row + 1
+          # console.log "Marker row: #{row} was: #{dec.line}"
+          lineToWrite = "b #{path}:#{row}\n"
+          data = data + lineToWrite
       # Save the changes
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
