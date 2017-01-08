@@ -7,7 +7,7 @@
         { label: 'Add', command: 'byebug-breakpoints:set' }
         { label: 'Remove',command: 'byebug-breakpoints:clear' }
         { label: 'Remove all', command: 'byebug-breakpoints:clear_all' }
-        { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
+        # { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
       ]
   ]
 
@@ -20,7 +20,7 @@
         { label: 'Add', command: 'byebug-breakpoints:set' }
         { label: 'Remove',command: 'byebug-breakpoints:clear' }
         { label: 'Remove all', command: 'byebug-breakpoints:clear_all' }
-        { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
+        # { label: 'Toggle', command: 'byebug-breakpoints:toggle' }
       ]
     ]
   }
