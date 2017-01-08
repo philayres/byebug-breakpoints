@@ -25,6 +25,7 @@ module.exports = ByebugBreakpoints =
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
+    # Not actually used
     @subscriptions.add atom.commands.add 'atom-workspace',
       'byebug-breakpoints:toggle': => @toggle()
 
@@ -35,13 +36,17 @@ module.exports = ByebugBreakpoints =
       'byebug-breakpoints:clear': => @clear()
     @subscriptions.add atom.commands.add 'atom-workspace',
       'byebug-breakpoints:clear_all': => @clear_all()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'byebug-breakpoints:clear_file': => @clear_editor()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'byebug-breakpoints:toggle-breakpoint': => @toggle_breakpoint()
 
+    # Highlight breakpoints when an editor is opened
     @subscriptions.add atom.workspace.observeActivePaneItem (item) =>
       @highlightExistingBreakpoints(item, 'line-number')
-    #
-    # @subscriptions.add  TextEditor.onDidSave (path) =>
-    #   @saveBreakpointsForBuffer()
 
+    # update breakpoints after saving an editor - some may have moved to
+    # different lines
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @highlightExistingBreakpoints(editor, 'line-number')
       editor.onDidSave (path) =>
@@ -64,6 +69,33 @@ module.exports = ByebugBreakpoints =
     else
       @modalPanel.show()
 
+  toggle_breakpoint: ->
+    editor = atom.workspace.getActiveTextEditor()
+    projectRoot = atom.project.getPaths()[0]
+    row = editor.getCursorBufferPosition().row + 1
+    path = editor.getPath()
+
+    return if path.search(/\.rb/i) == -1
+    breakpoint = "b #{path}:#{row}\n"
+
+    fs.readFile "#{projectRoot}/.byebugrc", (err, data) =>
+      if (err)
+        throw err
+      data = data.toString()
+      if data.search(breakpoint) == -1
+        # set
+        data = data + breakpoint
+        @setDecorationForCurrentSelection(editor, 'line-number', "#{row}")
+      else
+        # clear
+        data = data.replace(new RegExp(breakpoint, 'g'), "")
+        @clearDecorationForCurrentSelection(editor, 'line-number', "#{row}")
+
+      fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
+        if (err)
+          throw err
+
+
   set: ->
     # console.log 'set breakpoint'
     # add if not present
@@ -72,36 +104,19 @@ module.exports = ByebugBreakpoints =
     row = editor.getCursorBufferPosition().row + 1
     path = editor.getPath()
 
-    lineToWrite = "b #{path}:#{row}\n"
-
-    # fs.appendFile "#{projectRoot}/.byebugrc", lineToWrite, (error) ->
-    #   #console.error("Error writing breakpoint to file", error) if error
-
     # only for .rb files
     return if path.search(/\.rb/i) == -1
+    lineToWrite = "b #{path}:#{row}\n"
+
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) ->
       if (err)
         throw err
       data = data.toString()
-      # console.log data
       return if data.search(lineToWrite) != -1
-      # console.log "#{lineToWrite} not found"
       data = data + lineToWrite
-      # console.log data
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
-        # console.log('It\'s saved!')
-
-    # example to highlight a line but it moves with code.
-    # need to put marker in the gutter and have it static
-
-    # range = editor.getSelectedBufferRange()
-    # marker = editor.markBufferRange(range)
-    # # decoration = editor.decorateMarker(marker,
-    # #   {type: 'line', class: 'active-breakpoint'})
-    # decoration = editor.decorateMarker(marker,
-    #   {type: 'line-number', class: 'line-number-red'})
 
     @setDecorationForCurrentSelection(editor, 'line-number', "#{path}:#{row}")
 
@@ -113,10 +128,7 @@ module.exports = ByebugBreakpoints =
     row = editor.getCursorBufferPosition().row + 1
     path = editor.getPath()
 
-    lineToWrite = "b #{path}:#{row}\n"
-
-    # fs.appendFile "#{projectRoot}/.byebugrc", lineToWrite, (error) ->
-    #   console.error("Error writing breakpoint to file", error) if error
+    lineToMatch = "b #{path}:#{row}\n"
 
     # only for .rb files
     return if path.search(/\.rb/gi) == -1
@@ -124,41 +136,53 @@ module.exports = ByebugBreakpoints =
       if (err)
         throw err
       data = data.toString()
-      # console.log data
-      return if data.search(lineToWrite) == -1
-      # console.log "#{lineToWrite} found"
-      data = data.replace(new RegExp(lineToWrite, 'g'), "")
-      # console.log "#{lineToWrite} found and removed"
+      return if data.search(lineToMatch) == -1
+      data = data.replace(new RegExp(lineToMatch, 'g'), "")
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
-        # console.log('It\'s saved!')
     @clearDecorationForCurrentSelection(editor, 'line-number', "#{path}:#{row}")
 
+  # Clear breakpoints in the given editor
+  clear_editor: ->
+    # console.log 'clear all'
+    # remove if found
+    editor = atom.workspace.getActiveTextEditor()
+    projectRoot = atom.project.getPaths()[0]
+    path = editor.getPath()
+    lineToMatch = "b #{path}:\\d+\\n"
+
+    fs.readFile "#{projectRoot}/.byebugrc", (err, data) ->
+      if (err)
+        throw err
+      data = data.toString()
+      # exit if no breakpoints for file
+      return if data.search(lineToMatch) == -1
+      # remove al breakpoints
+      data = data.replace(new RegExp(lineToMatch, 'g'), "")
+      # write the updated file
+      fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
+        if (err)
+          throw err
+
+    @destroyDecorationsForEditor(editor)
+
+  # Clear breakpoints in all files
   clear_all: ->
     # console.log 'clear all'
     # remove if found
     editor = atom.workspace.getActiveTextEditor()
     projectRoot = atom.project.getPaths()[0]
 
-    # fs.appendFile "#{projectRoot}/.byebugrc", lineToWrite, (error) ->
-    #   console.error("Error writing breakpoint to file", error) if error
-
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) ->
       if (err)
         throw err
       data = data.toString()
-      # console.log data
       return if data.search(/\.rb:\d+/) == -1
-      #console.log "some breakpoints found"
-      #console.log data
-      data = data.replace(/.*\.rb:\d+\n/g, "")
-      #console.log data
-      # console.log "#{lineToWrite} found and removed"
+      data = data.replace(/b.*\.rb:\d+\n/g, "")
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
-        # console.log('It\'s saved!')
 
     @destroyAllDecorations()
 
@@ -173,8 +197,6 @@ module.exports = ByebugBreakpoints =
     path = editor.getPath()
     return unless path?
     return if path.search(/\.rb/) == -1
-    # type = 'line-number'
-    # data = fs.readFileSync "#{projectRoot}/.byebugrc"
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) =>
       if (err)
         throw err
@@ -203,9 +225,7 @@ module.exports = ByebugBreakpoints =
     return if savedPath.path.search(/\.rb/i) == -1
 
     editor = atom.workspace.getActiveTextEditor()
-    # console.log atom.project.getPaths()
     projectRoot = atom.project.getPaths()[0]
-    # row = editor.getCursorBufferPosition().row + 1
     path = savedPath.path
     # read the file
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) =>
@@ -230,6 +250,8 @@ module.exports = ByebugBreakpoints =
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
+
+  ## Utility methods
 
   createDecorationFromCurrentSelection: (editor, type) ->
     # Get the user's selection from the editor
@@ -267,11 +289,9 @@ module.exports = ByebugBreakpoints =
     decorations = @getCachedDecorations(editor)
     return unless decorations?
     for line in decorations
-      # console.log "destroy for line #{line}"
-
       decoration = line.dec
       @destroyDecorationMarker(decoration)
-    @decorationsByEditorId[editor.id] = []
+    delete @decorationsByEditorId[editor.id] # = []
 
 
   # Destory the decoration's marker because we will no longer need it.
@@ -281,20 +301,6 @@ module.exports = ByebugBreakpoints =
     # console.log "destroy marker #{decoration.getMarker()}"
     decoration.getMarker().destroy()
     # @listMarkers('destroy marker')
-
-  # listMarkers: (heading) ->
-  #   editor=@getEditor()
-  #   # console.log heading
-  #   for marker in editor.findMarkers()
-  #     console.log "#{marker}"
-  #   console.log  "@decorationsByEditorId:"
-  #   console.log @decorationsByEditorId
-  #   console.log "@getCachedDecorations(editor)"
-  #   console.log @getCachedDecorations(editor)
-  #
-  #   return unless @decorationsByEditorId[editor.id]?
-  #   for cache in @decorationsByEditorId[editor.id]
-  #     console.log  cache
 
   setDecorationForCurrentSelection: (editor, type, line) ->
     # return unless editor = @getEditor()
@@ -312,9 +318,6 @@ module.exports = ByebugBreakpoints =
       @removeCachedDecoration(editor, line)
     atom.views.getView(atom.workspace).focus()
     decoration
-
-
-  ## Utility methods
 
   getEditor: () ->
     atom.workspace.getActiveTextEditor()
@@ -361,3 +364,17 @@ module.exports = ByebugBreakpoints =
     # console.log @decorationsByEditorId
     @decorationsByEditorId[editor.id].push dec
     # console.log @decorationsByEditorId
+
+  # listMarkers: (heading) ->
+  #   editor=@getEditor()
+  #   # console.log heading
+  #   for marker in editor.findMarkers()
+  #     console.log "#{marker}"
+  #   console.log  "@decorationsByEditorId:"
+  #   console.log @decorationsByEditorId
+  #   console.log "@getCachedDecorations(editor)"
+  #   console.log @getCachedDecorations(editor)
+  #
+  #   return unless @decorationsByEditorId[editor.id]?
+  #   for cache in @decorationsByEditorId[editor.id]
+  #     console.log  cache

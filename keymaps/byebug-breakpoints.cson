@@ -9,6 +9,8 @@
 # https://atom.io/docs/latest/behind-atom-keymaps-in-depth
 'atom-workspace':
   # 'cmd-alt-b t': 'byebug-breakpoints:toggle'
+  'cmd-alt-b cmd-alt-b': 'byebug-breakpoints:toggle-breakpoint'
   'cmd-alt-b s': 'byebug-breakpoints:set'
   'cmd-alt-b d': 'byebug-breakpoints:clear'
   'cmd-alt-b a': 'byebug-breakpoints:clear_all'
+  'cmd-alt-b f': 'byebug-breakpoints:clear_file'

@@ -1,3 +1,8 @@
+## 0.3.0 - 08 Jan 2017
+### New features
+* Add breakpoint toggle with shortcut <code>cmd-alt-b cmd-alt-b</code> (double tap)
+* Add Clear File to clear all breakpoints in the active file <code>cmd-alt-b f</code>
+
 ## 0.2.3 - 08 Jan 2017
 * Remove the Toggle commands from the menus
 
