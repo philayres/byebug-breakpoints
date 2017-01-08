@@ -253,11 +253,11 @@ module.exports = ByebugBreakpoints =
   #   decoration.setProperties(newDecorationParams)
 
   destroyAllDecorations: ->
-    for editor_id in @decorationsByEditorId
+    for editor_id of @decorationsByEditorId
       decorations = @decorationsByEditorId[editor_id]
       for line in decorations
-        deoration = line[line]
-        destroyDecorationMarker decoration
+        decoration = line.dec
+        @destroyDecorationMarker decoration
     @decorationsByEditorId = {}
 
   destroyDecorationsForEditor: (editor) ->
