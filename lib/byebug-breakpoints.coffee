@@ -106,14 +106,14 @@ module.exports = ByebugBreakpoints =
 
     # only for .rb files
     return if path.search(/\.rb/i) == -1
-    lineToWrite = "b #{path}:#{row}\n"
+    breakpoint = "b #{path}:#{row}\n"
 
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) ->
       if (err)
         throw err
       data = data.toString()
-      return if data.search(lineToWrite) != -1
-      data = data + lineToWrite
+      return if data.search(breakpoint) != -1
+      data = data + breakpoint
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
@@ -128,7 +128,7 @@ module.exports = ByebugBreakpoints =
     row = editor.getCursorBufferPosition().row + 1
     path = editor.getPath()
 
-    lineToMatch = "b #{path}:#{row}\n"
+    breakpoint = "b #{path}:#{row}\n"
 
     # only for .rb files
     return if path.search(/\.rb/gi) == -1
@@ -136,8 +136,8 @@ module.exports = ByebugBreakpoints =
       if (err)
         throw err
       data = data.toString()
-      return if data.search(lineToMatch) == -1
-      data = data.replace(new RegExp(lineToMatch, 'g'), "")
+      return if data.search(breakpoint) == -1
+      data = data.replace(new RegExp(breakpoint, 'g'), "")
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
           throw err
@@ -150,16 +150,16 @@ module.exports = ByebugBreakpoints =
     editor = atom.workspace.getActiveTextEditor()
     projectRoot = atom.project.getPaths()[0]
     path = editor.getPath()
-    lineToMatch = "b #{path}:\\d+\\n"
+    breakpoint = "b #{path}:\\d+\\n"
 
     fs.readFile "#{projectRoot}/.byebugrc", (err, data) ->
       if (err)
         throw err
       data = data.toString()
       # exit if no breakpoints for file
-      return if data.search(lineToMatch) == -1
+      return if data.search(breakpoint) == -1
       # remove al breakpoints
-      data = data.replace(new RegExp(lineToMatch, 'g'), "")
+      data = data.replace(new RegExp(breakpoint, 'g'), "")
       # write the updated file
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
@@ -244,8 +244,7 @@ module.exports = ByebugBreakpoints =
           # actual row
           row = marker.getHeadBufferPosition().row + 1
           # console.log "Marker row: #{row} was: #{dec.line}"
-          lineToWrite = "b #{path}:#{row}\n"
-          data = data + lineToWrite
+          data = data + "b #{path}:#{row}\n"
       # Save the changes
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
