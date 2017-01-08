@@ -1,7 +1,7 @@
 {
   "name": "byebug-breakpoints",
   "main": "./lib/byebug-breakpoints",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Manage byebug breakpoints in byebugrc",
   "keywords": [
   ],
