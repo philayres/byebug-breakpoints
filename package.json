@@ -1,17 +1,14 @@
 {
   "name": "byebug-breakpoints",
   "main": "./lib/byebug-breakpoints",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Manage byebug breakpoints in byebugrc",
-  "keywords": [
-  ],
-  "activationCommands": {
-  },
+  "keywords": [],
+  "activationCommands": {},
   "repository": "https://github.com/mykiwibuddy/byebug-breakpoints",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
