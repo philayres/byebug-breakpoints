@@ -13,9 +13,11 @@ It does the following:
 ## Notes on use
 
 Use:
-* <code>cmd-alt-b s</code> to set a breakpoint on the selected line
-* <code>cmd-alt-b d</code> to delete a breakpoint on the selected line
-* <code>cmd-alt-b a</code> to remove all line-based breakpoints from the .byebugrc file.
+* <code>cmd-alt-b cmd-alt-b</code> (double tap) to toggle a breakpoint on the current line
+* <code>cmd-alt-b s</code> to set a breakpoint on the current line
+* <code>cmd-alt-b d</code> to delete a breakpoint on the current line
+* <code>cmd-alt-b f</code> to remove all line-based breakpoints for the active editor
+* <code>cmd-alt-b a</code> to remove all line-based breakpoints from the .byebugrc file. _If you have breakpoints for multiple projects, they will all be cleared._
 
 Breakpoints are highlighted in the line-number.
 
