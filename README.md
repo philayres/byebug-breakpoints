@@ -3,12 +3,9 @@
 This package helps manage the __.byebugrc__ file.
 
 It does the following:
-1. Allows you to add and remove byebug breakpoints in the Atom editor. The breakpoints are added
-  into the .byebugrc file which is loaded by by byebug when it starts (most of the time)
-2. Displays breakpoints set in the .byebugrc file when you open the file
-  for editing.
-3. Saves updated breakpoints in the .byebugrc file when you save your
-  .rb file - which means the breakpoints move with the code
+1. Allows you to add and remove byebug breakpoints in the Atom editor. The breakpoints are added into the .byebugrc file which is loaded by byebug when it starts (most of the time)
+2. Displays in the editor, breakpoints set in the .byebugrc file when you open the file for editing.
+3. Saves updated breakpoints in the .byebugrc file when you save your .rb file - which means the breakpoints move with the code as you remove or insert lines.
 
 ## Notes on use
 
