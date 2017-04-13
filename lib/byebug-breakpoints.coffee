@@ -85,11 +85,11 @@ module.exports = ByebugBreakpoints =
       if data.search(breakpoint) == -1
         # set
         data = data + breakpoint
-        @setDecorationForCurrentSelection(editor, 'line-number', "#{row}")
+        @setDecorationForCurrentSelection(editor, 'line-number', breakpoint)
       else
         # clear
         data = data.replace(new RegExp(breakpoint, 'g'), "")
-        @clearDecorationForCurrentSelection(editor, 'line-number', "#{row}")
+        @clearDecorationForCurrentSelection(editor, 'line-number', breakpoint)
 
       fs.writeFile "#{projectRoot}/.byebugrc", data, (err) ->
         if (err)
@@ -211,7 +211,7 @@ module.exports = ByebugBreakpoints =
             )
 
           cached = @getCachedDecoration(editor, type, line)
-          next if cached? && cached != null
+          continue if cached? && cached != null
           decoration = editor.decorateMarker(marker,{
             type: type,
             class: "#{type}-red"})
@@ -323,7 +323,7 @@ module.exports = ByebugBreakpoints =
 
   removeCachedDecoration: (editor, line) ->
     @decorationsByEditorId[editor.id]?= []
-    line_num = line.match(/(\d+)/)[0]
+    line_num = line.match(/:(\d+)/)[1]
     index = 0
     for i in @decorationsByEditorId[editor.id]
       if i.line == line_num
@@ -338,7 +338,7 @@ module.exports = ByebugBreakpoints =
     @decorationsByEditorId[editor.id]?= []
     # console.log @decorationsByEditorId[editor.id][line.match(/(\d+)/)[0]]
     # @decorationsByEditorId[editor.id][line.match(/(\d+)/)[0]]
-    line_num = line.match(/(\d+)/)[0]
+    line_num = line.match(/:(\d+)/)[1]
     # for dec in @decorationsByEditorId[editor.id]
     #   next unless dec?
     #   next unless dec[line] == line
@@ -355,7 +355,7 @@ module.exports = ByebugBreakpoints =
 
   setCachedDecoration: (editor, type, decoration, line) ->
     # console.log "setCachedDecoration #{editor.id} Line: #{line}"
-    line_num = line.match(/(\d+)/)[0]
+    line_num = line.match(/:(\d+)/)[1]
     dec = {
       line: line_num
       dec: decoration }

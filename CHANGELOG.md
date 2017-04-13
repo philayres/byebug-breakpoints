@@ -1,3 +1,7 @@
+## 0.3.1 - 13 Apr 2017
+* Fix breakpoint setting and clearing when file paths have numbers in them - which is always for gems
+* Fix Toggling breakpoints
+
 ## 0.3.0 - 08 Jan 2017
 ### New features
 * Toggle breakpoint: <code>cmd-alt-b cmd-alt-b</code> (double tap)
