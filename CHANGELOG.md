@@ -1,3 +1,13 @@
+## 0.2.6 - 18 Apr 2017
+* Fix deprecation warnings
+* Updated README to cover activating breakpoints when using Rails s
+
+## 0.2.5 - 14 Apr 2017
+* Align this document with the actual version number on Github
+
+## 0.2.4 - 14 Apr 2017
+* apparently this is the patch version.
+
 ## 0.3.1 - 13 Apr 2017
 * Fix breakpoint setting and clearing when file paths have numbers in them - which is always for gems
 * Fix Toggling breakpoints

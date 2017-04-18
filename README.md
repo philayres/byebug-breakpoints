@@ -18,6 +18,11 @@ Use:
 
 Breakpoints are highlighted in the line-number.
 
+### Testing in development
+Rails s does not load byebugrc until it encounters a byebug command.
+To have breakpoints loaded simply add byebug at the top of any
+module - it will run when the module is loaded. 
+
 ### Testing inside Atom
 I use the __ruby-test__ package for testing in Rails apps in Atom. I found that byebug statements in code caused the package to hang awating byebug commands (because you couldn't interact with it). This was why I wrote this package in the first place.
 
