@@ -351,6 +351,8 @@ module.exports = ByebugBreakpoints =
   getCachedDecorations: (editor) ->
     # console.log "getCachedDecorations"
     # console.log @decorationsByEditorId[editor.id]
+    return unless editor
+    
     @decorationsByEditorId[editor.id]
 
   setCachedDecoration: (editor, type, decoration, line) ->
